@@ -1,3 +1,4 @@
+
 import os
 import re
 import tempfile
@@ -13,22 +14,23 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="YouTube Download API", version="1.0.0")
 
-# 🔑 API Key Configuration
-# Load from env var: API_KEYS="key1,key2,key3" (comma-separated)
-# Fallback for local dev only - NEVER use in production without setting API_KEYS
-RAW_KEYS = os.getenv("API_KEYS", "")
-VALID_API_KEYS = {key.strip() for key in RAW_KEYS.split(",") if key.strip()}
+# 🔑 API Key Configuration - SET YOUR KEY HERE
+# For production: use os.getenv("API_KEYS") instead of hardcoding
+API_KEYS_RAW = os.getenv("API_KEYS", "dev-key-123")
+VALID_API_KEYS = {key.strip() for key in API_KEYS_RAW.split(",") if key.strip()}
 
-# Fallback for local testing (remove in production!)
+# Fallback for local testing only - REMOVE IN PRODUCTION
 if not VALID_API_KEYS:
     VALID_API_KEYS.add("dev-key-123")
     logger.warning("⚠️ No API_KEYS env var set. Using fallback key: 'dev-key-123'")
+
 
 def validate_api_key(key: str) -> None:
     """Raise 401 if API key is invalid"""
     if not key or key not in VALID_API_KEYS:
         logger.warning(f"❌ Invalid API key attempt: {key[:10] if key else 'empty'}...")
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
+
 
 @app.get("/download")
 async def download_media(
@@ -46,8 +48,8 @@ async def download_media(
     
     # 🔗 Normalize: convert video ID → full YouTube URL if needed
     if not url.startswith(("http://", "https://")):
-        if re.match(r"^[a-zA-Z0-9_-]{11}$", url):
-            url = f"https://www.youtube.com/watch?v={url}"            logger.debug(f"🔗 Converted ID to URL: {url}")
+        if re.match(r"^[a-zA-Z0-9_-]{11}$", url):            url = f"https://www.youtube.com/watch?v={url}"
+            logger.debug(f"🔗 Converted ID to URL: {url}")
         else:
             raise HTTPException(status_code=400, detail="Invalid YouTube URL or video ID")
     
@@ -64,8 +66,6 @@ async def download_media(
         # 🔄 Retry logic
         "retries": 3,
         "fragment_retries": 3,
-        # Optional: enable for age-restricted videos (requires browser_cookie3)
-        # "cookiesfrombrowser": ("chrome",),
     }
     
     # 🎵 Audio vs 🎬 Video format settings
@@ -77,13 +77,13 @@ async def download_media(
                 "preferredcodec": "mp3",
                 "preferredquality": "192",
             }],
-            "outtmpl": "%(id)s.mp3",  # Force .mp3 extension
+            "outtmpl": "%(id)s.mp3",
         })
     else:
         ydl_opts.update({
             "format": "bestvideo+bestaudio/best",
             "merge_output_format": "mp4",
-            "outtmpl": "%(id)s.mp4",  # Force .mp4 extension
+            "outtmpl": "%(id)s.mp4",
         })
     
     # 🗂️ Use temp directory (auto-cleanup on exit)
@@ -96,11 +96,11 @@ async def download_media(
                 info = ydl.extract_info(url, download=True)
                 
                 if not info or "id" not in info:
-                    raise HTTPException(status_code=404, detail="Video not found or restricted")                
-                video_id = info["id"]
+                    raise HTTPException(status_code=404, detail="Video not found or restricted")
+                                video_id = info["id"]
                 expected_ext = "mp3" if type == "audio" else "mp4"
                 
-                # 🔎 Find the actual downloaded file (yt-dlp may rename post-processing)
+                # 🔎 Find the actual downloaded file
                 downloaded_files = list(Path(tmpdir).glob(f"{video_id}.*"))
                 if not downloaded_files:
                     raise HTTPException(status_code=500, detail="Download completed but file not found")
@@ -117,7 +117,7 @@ async def download_media(
                 
                 def file_iterator():
                     with open(target_file, "rb") as f:
-                        while chunk := f.read(131072):  # 128KB = 131072 bytes
+                        while chunk := f.read(131072):
                             yield chunk
                 
                 logger.info(f"✅ Streaming {filename} ({type})")
@@ -126,7 +126,7 @@ async def download_media(
                     media_type=media_type,
                     headers={
                         "Content-Disposition": f'attachment; filename="{filename}"',
-                        "X-Video-ID": video_id,  # Helpful for debugging
+                        "X-Video-ID": video_id,
                     }
                 )
                 
@@ -146,10 +146,12 @@ async def download_media(
         except Exception as e:
             logger.exception(f"❌ Unexpected server error: {e}")
             raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
 @app.get("/health")
 async def health_check():
     """Simple health endpoint for monitoring"""
     return {"status": "healthy", "keys_loaded": len(VALID_API_KEYS)}
+
 
 @app.get("/")
 async def root():
@@ -162,5 +164,3 @@ async def root():
             "/health": "GET - Health check"
         }
     }
-
-# 🚀 Run with: uvicorn main:app --host 0.0.0.0 --port 8000
