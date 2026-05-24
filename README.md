@@ -1,79 +1,89 @@
-# 🚀 Fast YouTube Stream & Download API
+#🦋 ғᴀsᴛ ʏᴏᴜᴛᴜʙᴇ sᴛʀᴇᴀᴍ & ᴅᴏᴡɴʟᴏᴀᴅ ᴀᴘɪ
 
-A high-performance FastAPI-based YouTube downloader and streaming API.  
-Supports raw MP3/MP4 streaming with optimized chunked responses and low latency playback.
+ᴀ ʜɪɢʜ-ᴘᴇʀғᴏʀᴍᴀɴᴄᴇ ғᴀsᴛᴀᴘɪ-ʙᴀsᴇᴅ ʏᴏᴜᴛᴜʙᴇ ᴅᴏᴡɴʟᴏᴀᴅᴇʀ ᴀɴᴅ sᴛʀᴇᴀᴍɪɴɢ ᴀᴘɪ.  
+sᴜᴘᴘᴏʀᴛs ʀᴀᴡ ᴍᴘ3/ᴍᴘ4 sᴛʀᴇᴀᴍɪɴɢ ᴡɪᴛʜ ᴏᴘᴛɪᴍɪᴢᴇᴅ ᴄʜᴜɴᴋᴇᴅ ʀᴇsᴘᴏɴsᴇs ᴀɴᴅ ʟᴏᴡ ʟᴀᴛᴇɴᴄʏ ᴘʟᴀʏʙᴀᴄᴋ.
 
 ---
 
-## 🔍 How This Maps to Your Client
+## 🔍 ʜᴏᴡ ᴛʜɪs ᴍᴀᴘs ᴛᴏ ʏᴏᴜʀ ᴄʟɪᴇɴᴛ
 
-| Client Expectation | API Implementation |
+| ᴄʟɪᴇɴᴛ ᴇxᴘᴇᴄᴛᴀᴛɪᴏɴ | ᴀᴘɪ ɪᴍᴘʟᴇᴍᴇɴᴛᴀᴛɪᴏɴ |
 |-------------------|-------------------|
-| `GET /download?url=...&type=...&api_key=...` | `@app.get("/download")` with `Query` params |
-| Streams raw MP3/MP4 | `StreamingResponse` with 128KB chunked yield |
-| `200 OK` on success | FastAPI returns `200` automatically |
-| Non-200 on failure | `HTTPException` with proper status codes |
-| Timeout handling | FastAPI/Uvicorn supports timeout via reverse proxy or client config |
+| `ɢᴇᴛ /ᴅᴏᴡɴʟᴏᴀᴅ?ᴜʀʟ=...&ᴛʏᴘᴇ=...&ᴀᴘɪ_ᴋᴇʏ=...` | `@ᴀᴘᴘ.ɢᴇᴛ("/ᴅᴏᴡɴʟᴏᴀᴅ")` ᴡɪᴛʜ `Qᴜᴇʀʏ` ᴘᴀʀᴀᴍs |
+| sᴛʀᴇᴀᴍs ʀᴀᴡ ᴍᴘ3/ᴍᴘ4 | `SᴛʀᴇᴀᴍɪɴɢRᴇsᴘᴏɴsᴇ` ᴡɪᴛʜ 128ᴋʙ ᴄʜᴜɴᴋᴇᴅ ʏɪᴇʟᴅ |
+| `200 ᴏᴋ` ᴏɴ sᴜᴄᴄᴇss | ғᴀsᴛᴀᴘɪ ʀᴇᴛᴜʀɴs `200` ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ |
+| ɴᴏɴ-200 ᴏɴ ғᴀɪʟᴜʀᴇ | `HTTPException` ᴡɪᴛʜ ᴘʀᴏᴘᴇʀ sᴛᴀᴛᴜs ᴄᴏᴅᴇs |
+| ᴛɪᴍᴇᴏᴜᴛ ʜᴀɴᴅʟɪɴɢ | ғᴀsᴛᴀᴘɪ/ᴜᴠɪᴄᴏʀɴ sᴜᴘᴘᴏʀᴛs ᴛɪᴍᴇᴏᴜᴛ ᴠɪᴀ ʀᴇᴠᴇʀsᴇ ᴘʀᴏxʏ ᴏʀ ᴄʟɪᴇɴᴛ ᴄᴏɴғɪɢ |
 
 ---
 
-# 🚀 Production Recommendations
+# 🚀 ᴘʀᴏᴅᴜᴄᴛɪᴏɴ ʀᴇᴄᴏᴍᴍᴇɴᴅᴀᴛɪᴏɴs
 
-### 1. API Key Management
-Replace env var with a DB/Redis lookup or JWT validation.
+### 1. ᴀᴘɪ ᴋᴇʏ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ
+ʀᴇᴘʟᴀᴄᴇ ᴇɴᴠ ᴠᴀʀ ᴡɪᴛʜ ᴀ ᴅʙ/ʀᴇᴅɪs ʟᴏᴏᴋᴜᴘ ᴏʀ ᴊᴡᴛ ᴠᴀʟɪᴅᴀᴛɪᴏɴ.
 
-### 2. Rate Limiting
-Add `slowapi` or Nginx `limit_req` to prevent abuse.
+### 2. ʀᴀᴛᴇ ʟɪᴍɪᴛɪɴɢ
+ᴀᴅᴅ `sʟᴏᴡᴀᴘɪ` ᴏʀ ɴɢɪɴx `ʟɪᴍɪᴛ_ʀᴇǫ` ᴛᴏ ᴘʀᴇᴠᴇɴᴛ ᴀʙᴜsᴇ.
 
-### 3. Caching
-Cache frequent downloads to disk/Redis to save bandwidth and avoid re-fetching.
+### 3. ᴄᴀᴄʜɪɴɢ
+ᴄᴀᴄʜᴇ ғʀᴇǫᴜᴇɴᴛ ᴅᴏᴡɴʟᴏᴀᴅs ᴛᴏ ᴅɪsᴋ/ʀᴇᴅɪs ᴛᴏ sᴀᴠᴇ ʙᴀɴᴅᴡɪᴅᴛʜ & ᴀᴠᴏɪᴅ ʀᴇ-ғᴇᴛᴄʜɪɴɢ.
 
-### 4. Queue System
-For heavy traffic, use `Celery` + `RabbitMQ` to offload `yt-dlp` blocking calls.
+### 4. ǫᴜᴇᴜᴇ sʏsᴛᴇᴍ
+ғᴏʀ ʜᴇᴀᴠʏ ᴛʀᴀғғɪᴄ, ᴜsᴇ `ᴄᴇʟᴇʀʏ` + `ʀᴀʙʙɪᴛᴍǫ` ᴛᴏ ᴏғғʟᴏᴀᴅ `ʏᴛ-ᴅʟᴘ` ʙʟᴏᴄᴋɪɴɢ ᴄᴀʟʟs.
 
-### 5. Dockerize
+### 5. ᴅᴏᴄᴋᴇʀɪᴢᴇ
 
 ```dockerfile
-FROM python:3.11-slim
+ғʀᴏᴍ ᴘʏᴛʜᴏɴ:3.11-sʟɪᴍ
 
-RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    rm -rf /var/lib/apt/lists/*
+ʀᴜɴ ᴀᴘᴛ-ɢᴇᴛ ᴜᴘᴅᴀᴛᴇ && \
+    ᴀᴘᴛ-ɢᴇᴛ ɪɴsᴛᴀʟʟ -ʏ ғғᴍᴘᴇɢ && \
+    ʀᴍ -ʀғ /ᴠᴀʀ/ʟɪʙ/ᴀᴘᴛ/ʟɪsᴛs/*
 
-WORKDIR /app
+ᴡᴏʀᴋᴅɪʀ /ᴀᴘᴘ
 
-COPY requirements.txt .
+ᴄᴏᴘʏ ʀᴇǫᴜɪʀᴇᴍᴇɴᴛs.ᴛxᴛ .
 
-RUN pip install --no-cache-dir -r requirements.txt
+ʀᴜɴ ᴘɪᴘ ɪɴsᴛᴀʟʟ --ɴᴏ-ᴄᴀᴄʜᴇ-ᴅɪʀ -ʀ ʀᴇǫᴜɪʀᴇᴍᴇɴᴛs.ᴛxᴛ
 
-COPY . .
+ᴄᴏᴘʏ . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ᴄᴍᴅ ["ᴜᴠɪᴄᴏʀɴ", "ᴍᴀɪɴ:ᴀᴘᴘ", "--ʜᴏsᴛ", "0.0.0.0", "--ᴘᴏʀᴛ", "8000"]
 ```
 
 ---
 
-## ⚡ Features
+## ⚡ ғᴇᴀᴛᴜʀᴇs
 
-- 🎵 MP3 Audio Streaming
-- 🎬 MP4 Video Download
-- ⚡ Fast Chunked Streaming
-- 🔐 API Key Protection
-- 🐳 Docker Ready
-- 🚀 Production Optimized
-
----
-
-## 📦 Tech Stack
-
-- FastAPI
-- Uvicorn
-- yt-dlp
-- FFmpeg
-- Python 3.11
+- 🎵 ᴍᴘ3 ᴀᴜᴅɪᴏ sᴛʀᴇᴀᴍɪɴɢ
+- 🎬 ᴍᴘ4 ᴠɪᴅᴇᴏ ᴅᴏᴡɴʟᴏᴀᴅ
+- ⚡ ғᴀsᴛ ᴄʜᴜɴᴋᴇᴅ sᴛʀᴇᴀᴍɪɴɢ
+- 🔐 ᴀᴘɪ ᴋᴇʏ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ
+- 🐳 ᴅᴏᴄᴋᴇʀ ʀᴇᴀᴅʏ
+- 🚀 ᴘʀᴏᴅᴜᴄᴛɪᴏɴ ᴏᴘᴛɪᴍɪᴢᴇᴅ
 
 ---
 
-## 📜 License
+## 📦 ᴛᴇᴄʜ sᴛᴀᴄᴋ
 
-MIT License
+- ғᴀsᴛᴀᴘɪ
+- ᴜᴠɪᴄᴏʀɴ
+- ʏᴛ-ᴅʟᴘ
+- ғғᴍᴘᴇɢ
+- ᴘʏᴛʜᴏɴ 3.11
+
+---
+
+## 💫 ᴘᴏᴡᴇʀᴇᴅ ʙʏ
+
+### ɪɴғɪɴɪᴛʏ ʙᴏᴛs
+
+<p align="left">
+  <a href="https://t.me/theinfinitynetwork">ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɪɴғɪɴɪᴛʏ ʙᴏᴛs</a>
+</p>
+
+---
+
+## 📜 ʟɪᴄᴇɴsᴇ
+
+ᴍɪᴛ ʟɪᴄᴇɴsᴇ
