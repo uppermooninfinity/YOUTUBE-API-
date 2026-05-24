@@ -3,4 +3,4 @@ uvicorn[standard]==0.30.0
 yt-dlp>=2024.10.07
 python-multipart==0.0.9
 # Optional for cookies support:
-# browser_cookie3==0.19.1
+browser_cookie3==0.19.1
